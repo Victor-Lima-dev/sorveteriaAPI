@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Model;
 using sorveteriaApi.Model;
+using sorveteriaApi.Model.CarrinhoCompra;
 
 namespace Context
 {
@@ -15,5 +16,11 @@ namespace Context
         public DbSet<Deposito> Deposito { get; set; }
         //tabela produto
         public DbSet<Produto> Produtos { get; set; }
+
+        //tabela carrinho
+        public DbSet<Carrinho> Carrinho { get; set; }
+
+        //tabela item carrinho
+        public DbSet<ItemCarrinho> ItensCarrinho { get; set; }
     }
 }
