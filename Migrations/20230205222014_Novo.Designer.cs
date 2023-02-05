@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace sorveteriaApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230204205800_Inicial")]
-    partial class Inicial
+    [Migration("20230205222014_Novo")]
+    partial class Novo
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,14 +33,14 @@ namespace sorveteriaApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProdutoId"));
 
-                    b.Property<DateTime>("Data")
-                        .HasColumnType("datetime2");
-
                     b.Property<int?>("DepositoId")
                         .HasColumnType("int");
 
                     b.Property<double>("Preco")
                         .HasColumnType("float");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("int");
 
                     b.Property<string>("Sabor")
                         .IsRequired()
@@ -54,7 +54,52 @@ namespace sorveteriaApi.Migrations
 
                     b.HasIndex("DepositoId");
 
-                    b.ToTable("Produto");
+                    b.ToTable("Produtos");
+                });
+
+            modelBuilder.Entity("sorveteriaApi.Model.CarrinhoCompra.Carrinho", b =>
+                {
+                    b.Property<int>("CarrinhoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CarrinhoId"));
+
+                    b.Property<double>("ValorTotal")
+                        .HasColumnType("float");
+
+                    b.HasKey("CarrinhoId");
+
+                    b.ToTable("Carrinho");
+                });
+
+            modelBuilder.Entity("sorveteriaApi.Model.CarrinhoCompra.ItemCarrinho", b =>
+                {
+                    b.Property<int>("ItemCarrinhoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemCarrinhoId"));
+
+                    b.Property<int?>("CarrinhoId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProdutoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("int");
+
+                    b.Property<double>("ValorTotalItem")
+                        .HasColumnType("float");
+
+                    b.HasKey("ItemCarrinhoId");
+
+                    b.HasIndex("CarrinhoId");
+
+                    b.HasIndex("ProdutoId");
+
+                    b.ToTable("ItensCarrinho");
                 });
 
             modelBuilder.Entity("sorveteriaApi.Model.Deposito", b =>
@@ -78,6 +123,24 @@ namespace sorveteriaApi.Migrations
                     b.HasOne("sorveteriaApi.Model.Deposito", null)
                         .WithMany("Produtos")
                         .HasForeignKey("DepositoId");
+                });
+
+            modelBuilder.Entity("sorveteriaApi.Model.CarrinhoCompra.ItemCarrinho", b =>
+                {
+                    b.HasOne("sorveteriaApi.Model.CarrinhoCompra.Carrinho", null)
+                        .WithMany("Itens")
+                        .HasForeignKey("CarrinhoId");
+
+                    b.HasOne("Model.Produto", "Produto")
+                        .WithMany()
+                        .HasForeignKey("ProdutoId");
+
+                    b.Navigation("Produto");
+                });
+
+            modelBuilder.Entity("sorveteriaApi.Model.CarrinhoCompra.Carrinho", b =>
+                {
+                    b.Navigation("Itens");
                 });
 
             modelBuilder.Entity("sorveteriaApi.Model.Deposito", b =>

@@ -9,6 +9,7 @@ namespace sorveteriaApi.Model.CarrinhoCompra
     {
         public int CarrinhoId { get; set; }
         public List<ItemCarrinho> Itens { get; set; }
+        public List<ItemCarrinho> itens = new List<ItemCarrinho>();
         public double ValorTotal { get; set; }
 
         public void SomarValorTotal()

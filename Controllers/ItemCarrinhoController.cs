@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Context;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using sorveteriaApi.Model.CarrinhoCompra;
 
 namespace sorveteriaApi.Controllers
@@ -30,6 +31,22 @@ namespace sorveteriaApi.Controllers
             //adicionar itemCarrinho no banco de dados
             _context.ItensCarrinho.Add(itemCarrinho);
 
+            //salvar alterações
+            await _context.SaveChangesAsync();
+            //retornar itemCarrinho
+            return itemCarrinho;
+        }
+
+        //adicionar produto ao item
+        [HttpPost("adicionarProduto")]
+        public async Task<ActionResult<ItemCarrinho>> AdicionarProdutoItemCarrinho(int idProduto, int idItemCarrinho)
+        {
+            //buscar produto
+            var produto = await _context.Produtos.FirstOrDefaultAsync(p => p.ProdutoId == idProduto);
+            //buscar itemCarrinho
+            var itemCarrinho = await _context.ItensCarrinho.FirstOrDefaultAsync(i => i.ItemCarrinhoId == idItemCarrinho);
+            //adicionar produto ao itemCarrinho
+            itemCarrinho.Produto = produto;
             //salvar alterações
             await _context.SaveChangesAsync();
             //retornar itemCarrinho

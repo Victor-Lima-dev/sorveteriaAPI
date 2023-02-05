@@ -44,7 +44,8 @@ namespace sorveteriaApi.Controllers
         public async Task<ActionResult<Carrinho>> VerCarrinho(int id)
         {
             //buscar carrinho
-            var carrinho = await _context.Carrinho.FirstOrDefaultAsync(c => c.CarrinhoId == id);
+             var carrinho = await _context.Carrinho.FirstAsync(c => c.CarrinhoId == 1);
+            //var itemCarrinho = await _context.ItensCarrinho.FirstAsync(i => i.ItemCarrinhoId == 1);
             //retornar carrinho
             return carrinho;
         }
@@ -54,24 +55,58 @@ namespace sorveteriaApi.Controllers
         [HttpPost("adicionarItem")]
         public async Task<ActionResult<Carrinho>> AdicionarItemCarrinho(int idCarrinho)
         {
-            //buscar itemCarrinho
-            var itemCarrinho = await _context.ItensCarrinho.FirstOrDefaultAsync(i => i.ItemCarrinhoId == idCarrinho);
+           
             //buscar carrinho
-            var carrinho = await _context.Carrinho.FirstOrDefaultAsync(c => c.CarrinhoId == 4);
-
-            if(carrinho.Itens == null)
-            {
-                carrinho.Itens = new List<ItemCarrinho>();
-            }
-
-            //adicionar item ao carrinho
-            carrinho.Itens.Add(itemCarrinho);
-            _context.Carrinho.Update(carrinho);
-            _context.SaveChanges();
+            var carrinho = await _context.Carrinho.FirstOrDefaultAsync(c => c.CarrinhoId == idCarrinho);
+            carrinho.Itens = new List<ItemCarrinho>();
             return carrinho;
         }
 
-        
+        //adicionar um produto ao carrinho
+        //assincrono
+        [HttpPost("adicionarProduto")]
+        public async Task<ActionResult<Carrinho>> AdicionarProdutoCarrinho(int idProduto)
+        {
+            //buscar produto
+            var produto = await _context.Produtos.FirstOrDefaultAsync(p => p.ProdutoId == idProduto);
+            //buscar carrinho
+            var carrinho = await _context.Carrinho.FirstOrDefaultAsync(c => c.CarrinhoId == 4);
+
+            var verificarProduto = carrinho.Itens.FirstOrDefault(i => i.Produto.ProdutoId == idProduto);
+
+            if(verificarProduto != null)
+            {
+                verificarProduto.Quantidade++;
+                _context.ItensCarrinho.Update(verificarProduto);
+                _context.SaveChanges();
+                return carrinho;
+            }
+            else
+            {
+                //criar itemCarrinho
+                var itemCarrinho = new ItemCarrinho();
+                itemCarrinho.Produto = produto;
+                itemCarrinho.Quantidade = 1;
+                //adicionar itemCarrinho no banco de dados
+                _context.ItensCarrinho.Add(itemCarrinho);
+                //salvar alterações
+                await _context.SaveChangesAsync();
+
+                if (carrinho.Itens == null)
+                {
+                    carrinho.Itens = new List<ItemCarrinho>();
+                }
+
+                //adicionar item ao carrinho
+                carrinho.Itens.Add(itemCarrinho);
+                _context.Carrinho.Update(carrinho);
+                _context.SaveChanges();
+                return carrinho;
+            }
+
+
+           
+        }
 
         
 

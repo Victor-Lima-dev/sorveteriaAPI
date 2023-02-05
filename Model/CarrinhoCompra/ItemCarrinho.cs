@@ -13,6 +13,9 @@ namespace sorveteriaApi.Model.CarrinhoCompra
         public Produto? Produto { get; set; }
         public double ValorTotalItem { get; set; }
 
+        //carrinho id
+        //public int CarrinhoId { get; set; }
+
         public void CalcularValorTotalItem()
         {
             ValorTotalItem = Produto.Preco * Quantidade;

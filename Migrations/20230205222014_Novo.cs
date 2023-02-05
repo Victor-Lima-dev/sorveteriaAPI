@@ -5,7 +5,7 @@
 namespace sorveteriaApi.Migrations
 {
     /// <inheritdoc />
-    public partial class Carrinho : Migration
+    public partial class Novo : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,6 +21,41 @@ namespace sorveteriaApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Carrinho", x => x.CarrinhoId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Deposito",
+                columns: table => new
+                {
+                    DepositoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Quantidade = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Deposito", x => x.DepositoId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Produtos",
+                columns: table => new
+                {
+                    ProdutoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Tipo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Sabor = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Preco = table.Column<double>(type: "float", nullable: false),
+                    Quantidade = table.Column<int>(type: "int", nullable: false),
+                    DepositoId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Produtos", x => x.ProdutoId);
+                    table.ForeignKey(
+                        name: "FK_Produtos_Deposito_DepositoId",
+                        column: x => x.DepositoId,
+                        principalTable: "Deposito",
+                        principalColumn: "DepositoId");
                 });
 
             migrationBuilder.CreateTable(
@@ -58,6 +93,11 @@ namespace sorveteriaApi.Migrations
                 name: "IX_ItensCarrinho_ProdutoId",
                 table: "ItensCarrinho",
                 column: "ProdutoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Produtos_DepositoId",
+                table: "Produtos",
+                column: "DepositoId");
         }
 
         /// <inheritdoc />
@@ -68,6 +108,12 @@ namespace sorveteriaApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Carrinho");
+
+            migrationBuilder.DropTable(
+                name: "Produtos");
+
+            migrationBuilder.DropTable(
+                name: "Deposito");
         }
     }
 }
